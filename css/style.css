@@ -2,15 +2,20 @@
    DESIGN TOKENS (Soft Low-Contrast Bento Grid)
    ========================================== */
 :root {
-    --bg: #f3efe9;             /* Soft warm beige background */
-    --bg-alt: #eae5df;         /* Slightly darker warm-beige panel cards */
-    --text: #4a4744;           /* Muted charcoal-brown text */
-    --text-secondary: #706b67;  /* Medium warm-gray text */
-    --text-muted: #9c958f;      /* Light warm-gray for subtle details */
-    --border: #dfdad3;          /* Soft border */
-    --border-hover: #c4beb6;    /* Hover state border */
-    --accent: #bd6d42;          /* Terracotta accent for highlighting */
-    --accent-hover: #a15830;
+    --bg: #f7efe2;             /* Warm paper base */
+    --bg-alt: #fffaf2;         /* Clean elevated card surface */
+    --text: #1f2a35;           /* Ink blue-charcoal */
+    --text-secondary: #4f6070;  /* Cool readable body text */
+    --text-muted: #87929e;      /* Quiet metadata */
+    --border: #d8cfc1;          /* Warm neutral divider */
+    --border-hover: #98a7b4;    /* Cool hover divider */
+    --grid-line: rgba(31, 42, 53, 0.16);
+    --page-grid: rgba(31, 42, 53, 0.085);
+    --matrix-line: rgba(31, 42, 53, 0.24);
+    --matrix-glow: rgba(43, 98, 128, 0.1);
+    --accent: #d45f43;          /* Warm coral action color */
+    --accent-hover: #a94732;
+    --cool-accent: #2f6f8f;     /* Cool counterpoint */
     
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
     --font-heading: 'Inter', sans-serif;
@@ -21,15 +26,20 @@
 }
 
 [data-theme="dark"] {
-    --bg: #202023;             /* Soft warm charcoal-gray background */
-    --bg-alt: #2b2b2f;         /* Panels */
-    --text: #ccc5be;           /* Light warm-gray text */
-    --text-secondary: #a8a29b;  /* Medium warm-gray text */
-    --text-muted: #847e76;      /* Dark warm-gray muted text */
-    --border: #38383c;          /* Border */
-    --border-hover: #4e4e52;
-    --accent: #d88a64;          /* Warm terracotta accent */
-    --accent-hover: #e59d7b;
+    --bg: #11171d;             /* Deep graphite base */
+    --bg-alt: #1d252d;         /* Lifted slate card surface */
+    --text: #f4ecdf;           /* Warm off-white text */
+    --text-secondary: #bdc8d0;  /* Soft cool body text */
+    --text-muted: #81909a;      /* Muted metadata */
+    --border: #303b45;          /* Low-glare divider */
+    --border-hover: #607080;
+    --grid-line: rgba(211, 226, 235, 0.14);
+    --page-grid: rgba(211, 226, 235, 0.075);
+    --matrix-line: rgba(211, 226, 235, 0.22);
+    --matrix-glow: rgba(255, 138, 97, 0.13);
+    --accent: #ff8a61;          /* Luminous coral in dark mode */
+    --accent-hover: #ffad8f;
+    --cool-accent: #86c5e8;
 }
 
 /* ==========================================
@@ -47,7 +57,11 @@ html {
 }
 
 body {
-    background: var(--bg);
+    background:
+        linear-gradient(var(--page-grid) 2px, transparent 2px),
+        linear-gradient(90deg, var(--page-grid) 2px, transparent 2px),
+        var(--bg);
+    background-size: 48px 48px;
     color: var(--text-secondary);
     font-family: var(--font-sans);
     font-size: 15px;
@@ -55,6 +69,7 @@ body {
     transition: background 0.3s var(--transition), color 0.3s var(--transition);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
 h1, h2, h3, h4 {
@@ -82,6 +97,40 @@ li {
     color: var(--bg);
 }
 
+@media (pointer: fine) {
+    body,
+    a,
+    button {
+        cursor: none;
+    }
+
+    .site-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 22px;
+        height: 22px;
+        border: 2px solid var(--text);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        opacity: 0;
+        mix-blend-mode: difference;
+        transition: width 0.16s ease, height 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+    }
+
+    .site-cursor.is-visible {
+        opacity: 0.9;
+    }
+
+    .site-cursor.is-hovering {
+        width: 34px;
+        height: 34px;
+        border-color: var(--accent);
+    }
+}
+
 /* ==========================================
    LAYOUT CONTAINER & STICKY HEADER
    ========================================== */
@@ -100,7 +149,8 @@ li {
     justify-content: space-between;
     align-items: center;
     padding: 0 48px;
-    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
     z-index: 1000;
     transition: background 0.3s ease, border-color 0.3s ease;
@@ -171,41 +221,51 @@ li {
    MAIN CONTENT & BENTO GRID SYSTEM
    ========================================== */
 .main-content {
-    max-width: 1200px;
+    max-width: none;
     width: 100%;
-    margin: 0 auto;
-    padding: 24px 48px 48px 48px;
+    margin: 0;
+    padding: 18px clamp(16px, 3vw, 42px) 36px;
     flex-grow: 1;
 }
 
 .unified-grid {
+    --matrix-gap: 24px;
+    --frame-offset: 14px;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 24px;
+    grid-template-columns:
+        minmax(0, 1fr)
+        repeat(6, minmax(0, 183px))
+        minmax(0, 1fr);
+    gap: var(--matrix-gap);
+    padding: 12px;
+    overflow: visible;
 }
 
 /* Bento Card Base Styling */
 .bento-card {
+    --card-shadow: rgba(0, 0, 0, 0.08);
     background: var(--bg-alt);
-    border: 1px solid var(--border);
+    border: 0;
     border-radius: var(--radius);
-    padding: 32px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     transition: var(--transition);
     overflow: hidden;
     position: relative;
+    z-index: 1;
+    box-shadow: 0 1px 0 var(--grid-line), 0 18px 34px -28px var(--card-shadow);
 }
 
 .bento-card:hover {
+    box-shadow: 0 1px 0 var(--grid-line), 0 28px 50px -30px rgba(0, 0, 0, 0.28);
+    z-index: 5;
     transform: translateY(-4px);
-    border-color: var(--border-hover);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
 }
 
 [data-theme="dark"] .bento-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 0 var(--grid-line), 0 30px 54px -28px rgba(0, 0, 0, 0.55);
 }
 
 /* Column Spans */
@@ -221,11 +281,34 @@ li {
     grid-column: span 2;
 }
 
+@media (min-width: 1025px) {
+    .bio-card {
+        grid-column: 2 / span 4;
+    }
+
+    .photo-card {
+        grid-column: 6 / span 2;
+    }
+
+    .skills-card {
+        grid-column: 2 / span 3;
+    }
+
+    .socials-card {
+        grid-column: 5 / span 3;
+    }
+
+    .project-card {
+        grid-column: span var(--project-span, 2);
+        min-height: var(--project-height, 245px);
+    }
+}
+
 /* ==========================================
    BIO CARD STYLING
    ========================================== */
 .bio-card {
-    gap: 20px;
+    gap: 14px;
 }
 
 .bio-card .bio-header {
@@ -291,7 +374,7 @@ li {
    SKILLS CARD STYLING
    ========================================== */
 .skills-card {
-    gap: 16px;
+    gap: 12px;
 }
 
 .card-heading {
@@ -330,7 +413,7 @@ li {
    SOCIALS CARD STYLING
    ========================================== */
 .socials-card {
-    gap: 16px;
+    gap: 12px;
 }
 
 .socials-grid {
@@ -369,34 +452,84 @@ li {
 .project-card {
     padding: 0;
     gap: 0;
+    overflow: visible;
+    box-shadow:
+        0 20px 38px -30px rgba(0, 0, 0, 0.35);
+}
+
+.featured-project-card .card-title {
+    font-size: 16px;
+}
+
+.project-card::before,
+.project-card::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--frame-offset) * -1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.project-card::before {
+    border: 2px solid var(--matrix-line);
+    opacity: 0.58;
+    animation: matrixBlink 2.6s steps(2, end) infinite;
+}
+
+.project-card::after {
+    background:
+        linear-gradient(var(--matrix-line), var(--matrix-line)) left top / 22px 2px no-repeat,
+        linear-gradient(var(--matrix-line), var(--matrix-line)) right top / 22px 2px no-repeat,
+        linear-gradient(var(--matrix-line), var(--matrix-line)) left bottom / 22px 2px no-repeat,
+        linear-gradient(var(--matrix-line), var(--matrix-line)) right bottom / 22px 2px no-repeat,
+        linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) left top / 2px 22px no-repeat,
+        linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) right top / 2px 22px no-repeat,
+        linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) left bottom / 2px 22px no-repeat,
+        linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) right bottom / 2px 22px no-repeat;
+    box-shadow: 0 0 16px var(--matrix-glow);
+    opacity: 0.32;
+    animation: matrixPulse 3.4s ease-in-out infinite;
+}
+
+.project-card:nth-of-type(3n)::before {
+    animation-delay: -0.7s;
+}
+
+.project-card:nth-of-type(4n)::after {
+    animation-delay: -1.2s;
 }
 
 .project-card .card-media {
     width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
+    aspect-ratio: 21 / 9;
+    overflow: visible;
     border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+    background: var(--bg);
 }
 
 .project-card .card-media img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: var(--transition);
 }
 
 .project-card:hover .card-media img {
-    transform: scale(1.03);
+    transform: none;
 }
 
 .project-card .card-info {
-    padding: 20px;
+    padding: 14px 16px;
     display: flex;
     flex-grow: 1;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
     background: var(--bg-alt);
+    position: relative;
+    z-index: 4;
 }
 
 .project-card .card-meta {
@@ -466,6 +599,36 @@ li {
     gap: 4px;
 }
 
+@keyframes matrixBlink {
+    0%, 44%, 100% {
+        opacity: 0.28;
+        filter: none;
+    }
+    45%, 52% {
+        opacity: 0.95;
+        filter: drop-shadow(0 0 8px var(--matrix-line));
+    }
+    64%, 70% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes matrixPulse {
+    0%, 100% {
+        opacity: 0.18;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@media (pointer: fine) {
+    body,
+    body * {
+        cursor: none !important;
+    }
+}
+
 /* ==========================================
    SCROLL-TO-TOP BUTTON
    ========================================== */
@@ -504,7 +667,7 @@ li {
    FOOTER
    ========================================== */
 .footer {
-    padding: 40px 0;
+    padding: 24px 0;
     border-top: 1px solid var(--border);
     text-align: center;
     font-size: 13px;
@@ -521,6 +684,7 @@ li {
     
     .unified-grid {
         grid-template-columns: repeat(4, 1fr);
+        background-size: calc((100% - 54px) / 4) 100%, 100% 96px;
     }
     
     .span-4 {
@@ -544,6 +708,7 @@ li {
     .unified-grid {
         grid-template-columns: 1fr;
         gap: 16px;
+        background-size: 100% 92px, 100% 92px;
     }
     
     .span-4, .span-3, .span-2 {
@@ -552,6 +717,12 @@ li {
     
     .bento-card {
         padding: 24px;
+        transform: none;
+    }
+
+    .bento-card:hover {
+        transform: translateY(-4px);
+        animation: none;
     }
     
     .skills-grid, .socials-grid {
