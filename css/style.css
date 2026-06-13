@@ -702,12 +702,27 @@ li {
 
 @media (max-width: 768px) {
     .global-header {
-        padding: 0 24px;
+        padding: 0 16px;
+    }
+
+    .global-header .header-right {
+        gap: 12px;
+    }
+
+    .global-header .resume-link {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .main-content {
+        padding: 14px 12px 28px;
     }
     
     .unified-grid {
+        --frame-offset: 8px;
         grid-template-columns: 1fr;
         gap: 16px;
+        padding: 8px;
         background-size: 100% 92px, 100% 92px;
     }
     
@@ -716,7 +731,7 @@ li {
     }
     
     .bento-card {
-        padding: 24px;
+        padding: 18px;
         transform: none;
     }
 
@@ -727,5 +742,42 @@ li {
     
     .skills-grid, .socials-grid {
         grid-template-columns: 1fr;
+    }
+
+    .project-card {
+        min-height: 0;
+    }
+
+    .project-card .card-media {
+        aspect-ratio: 16 / 9;
+    }
+
+    .project-card .card-info {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .project-card .card-title {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 380px) {
+    .global-header .logo a {
+        font-size: 18px;
+    }
+
+    .global-header .resume-link {
+        padding: 7px 8px;
+    }
+
+    .global-header .resume-link i {
+        display: none;
+    }
+
+    .global-header .theme-btn {
+        width: 34px;
+        height: 34px;
     }
 }
