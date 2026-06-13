@@ -311,7 +311,7 @@ li {
     opacity: 0;
 }
 
-.bento-card:hover::before {
+.bento-card:not(.photo-card):not(.project-card):hover::before {
     border-left-color: var(--accent);
     opacity: 0.85;
 }
@@ -366,6 +366,10 @@ li {
         grid-column: 5 / span 3;
     }
 
+    .work-section-label {
+        grid-column: 2 / span 6;
+    }
+
     .project-card {
         grid-column: span var(--project-span, 2);
         min-height: var(--project-height, 245px);
@@ -405,6 +409,18 @@ li {
     font-size: 16px;
     color: var(--text-secondary);
     max-width: 580px;
+    min-height: 4.8em;
+}
+
+.bio-card .bio-text.is-typing::after {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    margin-left: 3px;
+    background: var(--accent);
+    vertical-align: -0.12em;
+    animation: caretBlink 780ms steps(1, end) infinite;
 }
 
 .bio-card .video-btn {
@@ -428,6 +444,40 @@ li {
    ========================================== */
 .photo-card {
     padding: 0;
+    background: var(--text);
+    isolation: isolate;
+}
+
+.photo-card::before,
+.photo-card::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.photo-card::before {
+    background:
+        linear-gradient(var(--accent), var(--accent)) left top / 34px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) right top / 34px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) left bottom / 34px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) right bottom / 34px 2px no-repeat,
+        linear-gradient(90deg, var(--accent), var(--accent)) left top / 2px 34px no-repeat,
+        linear-gradient(90deg, var(--accent), var(--accent)) right top / 2px 34px no-repeat,
+        linear-gradient(90deg, var(--accent), var(--accent)) left bottom / 2px 34px no-repeat,
+        linear-gradient(90deg, var(--accent), var(--accent)) right bottom / 2px 34px no-repeat;
+    opacity: 0.75;
+}
+
+.photo-card::after {
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--cool-accent) 24%, transparent), transparent 38%),
+        linear-gradient(315deg, color-mix(in srgb, var(--accent) 28%, transparent), transparent 42%),
+        linear-gradient(180deg, transparent 58%, rgba(0, 0, 0, 0.35));
+    mix-blend-mode: soft-light;
+    opacity: 0.9;
+    transition: opacity 0.28s ease;
 }
 
 .photo-card .profile-photo {
@@ -436,6 +486,18 @@ li {
     object-fit: cover;
     display: block;
     aspect-ratio: 1 / 1;
+    filter: contrast(1.04) saturate(0.92);
+    transform: scale(1.01);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), filter 0.42s ease;
+}
+
+.photo-card:hover .profile-photo {
+    filter: contrast(1.1) saturate(1.04);
+    transform: scale(1.055);
+}
+
+.photo-card:hover::after {
+    opacity: 0.7;
 }
 
 /* ==========================================
@@ -528,6 +590,34 @@ li {
 }
 
 /* ==========================================
+   WORK SECTION LABEL
+   ========================================== */
+.work-section-label {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 8px 0 2px;
+    border-bottom: 2px solid var(--grid-line);
+}
+
+.work-section-label span {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.work-section-label p {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+/* ==========================================
    PROJECT CARD STYLING
    ========================================== */
 .project-card {
@@ -617,8 +707,20 @@ li {
 .project-card .card-meta {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     overflow: hidden;
+}
+
+.project-card .card-badge {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 3px 7px;
 }
 
 .project-card .card-title {
@@ -628,6 +730,13 @@ li {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.project-card .card-role {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--text-secondary);
+    max-width: 36rem;
 }
 
 .project-card .card-tags {
@@ -743,6 +852,15 @@ li {
     }
 }
 
+@keyframes caretBlink {
+    0%, 52% {
+        opacity: 1;
+    }
+    53%, 100% {
+        opacity: 0;
+    }
+}
+
 @keyframes frameJitter {
     0%, 88%, 100% {
         transform: translate(0, 0);
@@ -815,6 +933,10 @@ li {
     .span-2 {
         grid-column: span 2;
     }
+
+    .work-section-label {
+        grid-column: span 4;
+    }
 }
 
 @media (max-width: 768px) {
@@ -844,6 +966,16 @@ li {
     
     .span-4, .span-3, .span-2 {
         grid-column: span 1;
+    }
+
+    .work-section-label {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .work-section-label p {
+        text-align: left;
     }
     
     .bento-card {

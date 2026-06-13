@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     setupCardPopIn();
+    setupBioTyping();
 
     function pickRandom(items) {
         return items[Math.floor(Math.random() * items.length)];
@@ -159,6 +160,40 @@ document.addEventListener('DOMContentLoaded', () => {
             element.addEventListener('mouseenter', () => cursor.classList.add('is-hovering'));
             element.addEventListener('mouseleave', () => cursor.classList.remove('is-hovering'));
         });
+    }
+
+    function setupBioTyping() {
+        const bioText = document.querySelector('.bio-text');
+        if (!bioText) {
+            return;
+        }
+
+        const fullText = bioText.textContent.trim();
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) {
+            bioText.textContent = fullText;
+            return;
+        }
+
+        bioText.textContent = '';
+        bioText.classList.add('is-typing');
+
+        let index = 0;
+        const typeNextCharacter = () => {
+            bioText.textContent = fullText.slice(0, index);
+            index += 1;
+
+            if (index <= fullText.length) {
+                window.setTimeout(typeNextCharacter, 18 + Math.random() * 18);
+                return;
+            }
+
+            window.setTimeout(() => {
+                bioText.classList.remove('is-typing');
+            }, 900);
+        };
+
+        window.setTimeout(typeNextCharacter, 520);
     }
 
     function getStoredTheme() {
