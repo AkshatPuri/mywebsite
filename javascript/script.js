@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupProjectFilters();
     setupCircleCursor();
     setupCardPopIn();
-    setupBioTyping();
     setupVideoModal();
 
     function pickRandom(items) {
@@ -291,39 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function setupBioTyping() {
-        const bioText = document.querySelector('.bio-text');
-        if (!bioText) {
-            return;
-        }
-
-        const fullText = bioText.textContent.trim();
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduceMotion) {
-            bioText.textContent = fullText;
-            return;
-        }
-
-        bioText.textContent = '';
-        bioText.classList.add('is-typing');
-
-        let index = 0;
-        const typeNextCharacter = () => {
-            bioText.textContent = fullText.slice(0, index);
-            index += 1;
-
-            if (index <= fullText.length) {
-                window.setTimeout(typeNextCharacter, 8 + Math.random() * 8);
-                return;
-            }
-
-            window.setTimeout(() => {
-                bioText.classList.remove('is-typing');
-            }, 1);
-        };
-
-        window.setTimeout(typeNextCharacter, 50);
-    }
 
     function setupVideoModal() {
         const videoBtn = document.querySelector('.video-btn');

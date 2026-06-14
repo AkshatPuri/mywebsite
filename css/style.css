@@ -524,17 +524,6 @@ li {
     overflow-wrap: break-word;
 }
 
-.bio-card .bio-text.is-typing::after {
-    content: "";
-    display: inline-block;
-    width: 8px;
-    height: 1em;
-    margin-left: 3px;
-    background: var(--accent);
-    vertical-align: -0.12em;
-    animation: caretBlink 780ms steps(1, end) infinite;
-}
-
 .bio-skills {
     display: flex;
     flex-wrap: wrap;
