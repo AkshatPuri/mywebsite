@@ -2,90 +2,130 @@
    DESIGN TOKENS (Soft Low-Contrast Bento Grid)
    ========================================== */
 :root {
-    --bg: #f7efe2;             /* Warm paper base */
-    --bg-alt: #fffaf2;         /* Clean elevated card surface */
-    --text: #1f2a35;           /* Ink blue-charcoal */
-    --text-secondary: #4f6070;  /* Cool readable body text */
-    --text-muted: #87929e;      /* Quiet metadata */
-    --border: #d8cfc1;          /* Warm neutral divider */
+    --bg: #f7efe2;
+    /* Warm paper base */
+    --bg-alt: #fffaf2;
+    /* Clean elevated card surface */
+    --text: #1f2a35;
+    /* Ink blue-charcoal */
+    --text-secondary: #4f6070;
+    /* Cool readable body text */
+    --text-muted: #87929e;
+    /* Quiet metadata */
+    --border: #d8cfc1;
+    /* Warm neutral divider */
     --grid-line: rgba(31, 42, 53, 0.16);
     --page-grid: rgba(31, 42, 53, 0.085);
     --matrix-line: rgba(31, 42, 53, 0.24);
     --matrix-glow: rgba(43, 98, 128, 0.1);
-    --accent: #d45f43;          /* Warm coral action color */
+    --accent: #d45f43;
+    /* Warm coral action color */
     --accent-hover: #a94732;
-    --cool-accent: #2f6f8f;     /* Cool counterpoint */
-    
+    --cool-accent: #2f6f8f;
+    /* Cool counterpoint */
+
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
     --font-heading: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-    
-    --radius: 0px;              /* Sharp premium edges */
+
+    --radius: 0px;
+    /* Sharp premium edges */
     --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] {
-    --bg: #11171d;             /* Deep graphite base */
-    --bg-alt: #1d252d;         /* Lifted slate card surface */
-    --text: #f4ecdf;           /* Warm off-white text */
-    --text-secondary: #bdc8d0;  /* Soft cool body text */
-    --text-muted: #81909a;      /* Muted metadata */
-    --border: #303b45;          /* Low-glare divider */
+    --bg: #11171d;
+    /* Deep graphite base */
+    --bg-alt: #1d252d;
+    /* Lifted slate card surface */
+    --text: #f4ecdf;
+    /* Warm off-white text */
+    --text-secondary: #bdc8d0;
+    /* Soft cool body text */
+    --text-muted: #81909a;
+    /* Muted metadata */
+    --border: #303b45;
+    /* Low-glare divider */
     --grid-line: rgba(211, 226, 235, 0.14);
     --page-grid: rgba(211, 226, 235, 0.075);
     --matrix-line: rgba(211, 226, 235, 0.22);
     --matrix-glow: rgba(255, 138, 97, 0.13);
-    --accent: #ff8a61;          /* Luminous coral in dark mode */
+    --accent: #ff8a61;
+    /* Luminous coral in dark mode */
     --accent-hover: #ffad8f;
     --cool-accent: #86c5e8;
 }
 
 [data-theme="arcade"] {
-    --bg: #090c11;              /* Arcade cabinet black */
-    --bg-alt: #151922;          /* Deep panel surface */
-    --text: #fff5d6;            /* Warm pixel-glow text */
-    --text-secondary: #c6d4dc;  /* Cool readable body text */
-    --text-muted: #81939e;      /* Muted terminal metadata */
-    --border: #2d3743;          /* Quiet steel divider */
+    --bg: #090c11;
+    /* Arcade cabinet black */
+    --bg-alt: #151922;
+    /* Deep panel surface */
+    --text: #fff5d6;
+    /* Warm pixel-glow text */
+    --text-secondary: #c6d4dc;
+    /* Cool readable body text */
+    --text-muted: #81939e;
+    /* Muted terminal metadata */
+    --border: #2d3743;
+    /* Quiet steel divider */
     --grid-line: rgba(242, 184, 75, 0.18);
     --page-grid: rgba(91, 210, 203, 0.085);
     --matrix-line: rgba(91, 210, 203, 0.26);
     --matrix-glow: rgba(242, 184, 75, 0.16);
-    --accent: #f2b84b;          /* Coin-op amber */
+    --accent: #f2b84b;
+    /* Coin-op amber */
     --accent-hover: #ffd775;
-    --cool-accent: #5bd2cb;     /* CRT cyan counterpoint */
+    --cool-accent: #5bd2cb;
+    /* CRT cyan counterpoint */
 }
 
 [data-theme="forest"] {
-    --bg: #0c120f;              /* Deep pine base */
-    --bg-alt: #172018;          /* Moss-dark panel surface */
-    --text: #f0ead8;            /* Warm parchment text */
-    --text-secondary: #c3cbb6;  /* Soft herb body text */
-    --text-muted: #83917e;      /* Quiet sage metadata */
-    --border: #303c2f;          /* Organic divider */
+    --bg: #0c120f;
+    /* Deep pine base */
+    --bg-alt: #172018;
+    /* Moss-dark panel surface */
+    --text: #f0ead8;
+    /* Warm parchment text */
+    --text-secondary: #c3cbb6;
+    /* Soft herb body text */
+    --text-muted: #83917e;
+    /* Quiet sage metadata */
+    --border: #303c2f;
+    /* Organic divider */
     --grid-line: rgba(140, 172, 112, 0.18);
     --page-grid: rgba(140, 172, 112, 0.075);
     --matrix-line: rgba(215, 169, 85, 0.28);
     --matrix-glow: rgba(111, 171, 117, 0.15);
-    --accent: #d7a955;          /* Brass highlight */
+    --accent: #d7a955;
+    /* Brass highlight */
     --accent-hover: #f0ca78;
-    --cool-accent: #6fab75;     /* Moss counterpoint */
+    --cool-accent: #6fab75;
+    /* Moss counterpoint */
 }
 
 [data-theme="mono"] {
-    --bg: #f3f4f1;              /* Gallery paper base */
-    --bg-alt: #ffffff;          /* Crisp white surface */
-    --text: #16181a;            /* Ink black */
-    --text-secondary: #4d5358;  /* Neutral body text */
-    --text-muted: #848b91;      /* Soft graphite metadata */
-    --border: #c9ced2;          /* Clean divider */
+    --bg: #f3f4f1;
+    /* Gallery paper base */
+    --bg-alt: #ffffff;
+    /* Crisp white surface */
+    --text: #16181a;
+    /* Ink black */
+    --text-secondary: #4d5358;
+    /* Neutral body text */
+    --text-muted: #848b91;
+    /* Soft graphite metadata */
+    --border: #c9ced2;
+    /* Clean divider */
     --grid-line: rgba(22, 24, 26, 0.16);
     --page-grid: rgba(22, 24, 26, 0.07);
     --matrix-line: rgba(22, 24, 26, 0.24);
     --matrix-glow: rgba(201, 61, 43, 0.12);
-    --accent: #c93d2b;          /* Editorial red */
+    --accent: #c93d2b;
+    /* Editorial red */
     --accent-hover: #942c20;
-    --cool-accent: #2d6978;     /* Blue-gray counterpoint */
+    --cool-accent: #2d6978;
+    /* Blue-gray counterpoint */
 }
 
 /* ==========================================
@@ -119,7 +159,10 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     color: var(--text);
     font-family: var(--font-heading);
     font-weight: 700;
@@ -145,6 +188,7 @@ li {
 }
 
 @media (pointer: fine) {
+
     body,
     a,
     button,
@@ -333,9 +377,7 @@ li {
     --frame-offset: 14px;
     display: grid;
     grid-template-columns:
-        minmax(0, 0.35fr)
-        repeat(6, minmax(0, 1fr))
-        minmax(0, 0.35fr);
+        minmax(0, 0.35fr) repeat(6, minmax(0, 1fr)) minmax(0, 0.35fr);
     gap: var(--matrix-gap);
     padding: clamp(8px, 1.1vw, 12px);
     overflow: visible;
@@ -411,7 +453,7 @@ li {
     opacity: 0.85;
 }
 
-.bento-card > * {
+.bento-card>* {
     position: relative;
     z-index: 1;
 }
@@ -1006,23 +1048,33 @@ li {
 }
 
 @keyframes matrixBlink {
-    0%, 44%, 100% {
+
+    0%,
+    44%,
+    100% {
         opacity: 0.28;
         filter: none;
     }
-    45%, 52% {
+
+    45%,
+    52% {
         opacity: 0.95;
         filter: drop-shadow(0 0 8px var(--matrix-line));
     }
-    64%, 70% {
+
+    64%,
+    70% {
         opacity: 0.7;
     }
 }
 
 @keyframes matrixPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.18;
     }
+
     50% {
         opacity: 0.5;
     }
@@ -1032,6 +1084,7 @@ li {
     from {
         background-position: 0 0, 0 0, 0 0;
     }
+
     to {
         background-position: 48px 48px, 48px 48px, 0 0;
     }
@@ -1042,14 +1095,17 @@ li {
         opacity: 0;
         transform: scale(0);
     }
+
     55% {
         opacity: 1;
         transform: scale(1.08);
     }
+
     70% {
         opacity: 1;
         transform: scale(0.97);
     }
+
     100% {
         opacity: 1;
         transform: scale(1);
@@ -1057,10 +1113,13 @@ li {
 }
 
 @keyframes headingSignal {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scaleX(0.35);
         opacity: 0.45;
     }
+
     50% {
         transform: scaleX(1);
         opacity: 1;
@@ -1068,23 +1127,31 @@ li {
 }
 
 @keyframes caretBlink {
-    0%, 52% {
+
+    0%,
+    52% {
         opacity: 1;
     }
-    53%, 100% {
+
+    53%,
+    100% {
         opacity: 0;
     }
 }
 
 @keyframes workSignal {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateX(0);
         opacity: 0.45;
     }
+
     45% {
         transform: translateX(140px);
         opacity: 1;
     }
+
     70% {
         transform: translateX(60px);
         opacity: 0.7;
@@ -1092,38 +1159,50 @@ li {
 }
 
 @keyframes photoFrameLock {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.75;
         transform: translate(0, 0);
     }
+
     25% {
         opacity: 1;
         transform: translate(2px, 0);
     }
+
     50% {
         transform: translate(-1px, 1px);
     }
+
     75% {
         transform: translate(0, -1px);
     }
 }
 
 @keyframes frameJitter {
-    0%, 88%, 100% {
+
+    0%,
+    88%,
+    100% {
         transform: translate(0, 0);
     }
+
     90% {
         transform: translate(2px, 0);
     }
+
     92% {
         transform: translate(-1px, 1px);
     }
+
     94% {
         transform: translate(0, -1px);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
@@ -1140,6 +1219,7 @@ li {
 }
 
 @media (pointer: fine) {
+
     body,
     body * {
         cursor: none !important;
@@ -1164,7 +1244,7 @@ li {
     .main-content {
         padding: 24px;
     }
-    
+
     .intro-grid {
         width: 100%;
         grid-template-columns: minmax(0, 1fr) auto;
@@ -1191,15 +1271,15 @@ li {
         grid-column: span 3;
         min-height: var(--project-height, 220px);
     }
-    
+
     .span-4 {
         grid-column: span 4;
     }
-    
+
     .span-3 {
         grid-column: span 2;
     }
-    
+
     .span-2 {
         grid-column: span 2;
     }
@@ -1248,7 +1328,7 @@ li {
     .main-content {
         padding: 14px 12px 28px;
     }
-    
+
     .unified-grid {
         --frame-offset: 8px;
         --intro-gap: 14px;
@@ -1262,8 +1342,10 @@ li {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
-    .span-4, .span-3, .span-2 {
+
+    .span-4,
+    .span-3,
+    .span-2 {
         grid-column: span 1;
     }
 
@@ -1290,7 +1372,7 @@ li {
     .bio-skills span:not(:last-child)::after {
         margin: 0 6px;
     }
-    
+
     .bento-card {
         padding: 18px;
         transform: none;
@@ -1313,7 +1395,7 @@ li {
     .bento-card:hover {
         transform: translateY(-4px);
     }
-    
+
     .social-rail {
         flex-basis: 38px;
         gap: 6px;

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mono: { icon: 'fas fa-adjust', label: 'Mono theme' }
     };
     const projectCards = [...document.querySelectorAll('.project-card')];
-    const pinnedFeaturedTitles = ['The Bonfire 2: Uncharted Shores', 'Metal Haven'];
+    const pinnedFeaturedTitles = ['The Tree Creator', 'The Bonfire 2: Uncharted Shores', 'Metal Haven', 'The Bonfire: Forsaken Lands'];
     const pinnedFeaturedLayouts = [
         { span: 4, height: 235 },
         { span: 2, height: 220 }
