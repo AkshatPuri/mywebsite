@@ -1320,33 +1320,28 @@ li {
 
 @media (max-width: 980px) {
     .intro-grid {
-        --intro-panel-height: clamp(16rem, 32vh, 18rem);
-        flex-direction: column;
+        --intro-panel-height: clamp(14rem, 30vw, 18rem);
+        flex-direction: row;
+        align-items: stretch;
+        width: 100%;
     }
 
     .bio-card {
         flex: 1 1 auto;
-        height: auto;
-        min-height: 0;
-    }
-
-    .intro-grid .bio-card,
-    .intro-grid .profile-side {
-        grid-column: 1;
+        height: var(--intro-panel-height);
+        min-width: 0;
     }
 
     .intro-grid .profile-side {
-        width: min(100%, calc(var(--intro-panel-height) + var(--social-rail-width) + var(--intro-side-gap)));
-        justify-self: center;
-        align-self: center;
-        flex: 0 0 auto;
-        height: auto;
+        flex: 0 0 calc(var(--intro-panel-height) + var(--social-rail-width) + var(--intro-side-gap));
+        height: var(--intro-panel-height);
+        align-self: stretch;
     }
 
     .profile-side .photo-card {
-        flex: 1 1 auto;
-        width: auto;
-        height: auto;
+        flex: 0 0 var(--intro-panel-height);
+        width: var(--intro-panel-height);
+        height: var(--intro-panel-height);
     }
 }
 
@@ -1374,6 +1369,28 @@ li {
         grid-template-columns: 1fr;
         gap: 16px;
         padding: 8px;
+    }
+
+    .intro-grid {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .bio-card {
+        height: auto;
+    }
+
+    .profile-side {
+        width: min(100%, 300px);
+        margin: 0 auto;
+        flex: 0 0 auto;
+        height: auto;
+    }
+
+    .profile-side .photo-card {
+        width: auto;
+        height: auto;
+        flex: 1 1 auto;
     }
 
     .work-grid {
@@ -1422,15 +1439,6 @@ li {
         padding: 0;
     }
 
-    .intro-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .intro-grid .profile-side {
-        width: min(100%, 300px);
-        justify-self: center;
-    }
-
     .bento-card:hover {
         transform: translateY(-4px);
     }
@@ -1465,7 +1473,6 @@ li {
         white-space: normal;
     }
 }
-
 @media (max-width: 380px) {
     .global-header .logo a {
         font-size: 18px;
