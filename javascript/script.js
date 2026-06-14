@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'clamp(11.5rem, 25vh, 15rem)'
     ];
 
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        setTheme(savedTheme);
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -313,16 +313,16 @@ document.addEventListener('DOMContentLoaded', () => {
             index += 1;
 
             if (index <= fullText.length) {
-                window.setTimeout(typeNextCharacter, 18 + Math.random() * 18);
+                window.setTimeout(typeNextCharacter, 8 + Math.random() * 8);
                 return;
             }
 
             window.setTimeout(() => {
                 bioText.classList.remove('is-typing');
-            }, 900);
+            }, 1);
         };
 
-        window.setTimeout(typeNextCharacter, 520);
+        window.setTimeout(typeNextCharacter, 50);
     }
 
     function setupVideoModal() {
@@ -371,11 +371,11 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         videoBtn.addEventListener('click', openModal);
-        
+
         if (closeModalBtn) {
             closeModalBtn.addEventListener('click', closeModal);
         }
-        
+
         if (modalBackdrop) {
             modalBackdrop.addEventListener('click', closeModal);
         }
@@ -387,8 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function setTheme(theme) 
-    {
+    function setTheme(theme) {
         const activeTheme = themes.includes(theme) ? theme : 'light';
         document.documentElement.setAttribute('data-theme', activeTheme);
         localStorage.setItem('theme', activeTheme);
