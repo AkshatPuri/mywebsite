@@ -1,22 +1,54 @@
 """Add a project card to the Limbvoid Games portfolio.
 
-Examples:
-    python tools/add_project_card.py --title "My Game" --image screenshots/my-game.png --role "Gameplay prototype" --tags "C#,Unity" --link "https://example.com" --link-title "Website"
-    python tools/add_project_card.py --title "New Tool" --image "https://example.com/screenshot.png" --role "Editor utility" --tags "Godot,Tool" --link "https://limbvoid.itch.io/new-tool" --icon "fab fa-itch-io"
-    python tools/add_project_card.py --dry-run
-    python tools/add_project_card.py --remove-dry-run
+This script runs in GUI mode to easily construct, preview, and delete
+project cards in the portfolio.
 """
 
 from __future__ import annotations
 
-import argparse
 import html
 import re
 import shutil
 import sys
-import urllib.parse
+import tkinter as tk
+from tkinter import filedialog, messagebox, ttk
 import urllib.request
 from pathlib import Path
+
+
+class ToolTip:
+    def __init__(self, widget: tk.Widget, text: str):
+        self.widget = widget
+        self.text = text
+        self.tip_window = None
+        self.widget.bind("<Enter>", self.show_tip)
+        self.widget.bind("<Leave>", self.hide_tip)
+
+    def show_tip(self, event=None):
+        if self.tip_window or not self.text:
+            return
+        x = self.widget.winfo_rootx() + 20
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 2
+        self.tip_window = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        label = tk.Label(
+            tw,
+            text=self.text,
+            justify=tk.LEFT,
+            background="#ffffe0",
+            foreground="#333333",
+            relief=tk.SOLID,
+            borderwidth=1,
+            font=("TkDefaultFont", 9, "normal")
+        )
+        label.pack(ipadx=4, ipady=2)
+
+    def hide_tip(self, event=None):
+        tw = self.tip_window
+        self.tip_window = None
+        if tw:
+            tw.destroy()
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,120 +74,31 @@ ICON_BY_TITLE = {
 
 
 def main() -> int:
-    args = parse_args()
-    index_html = INDEX_PATH.read_text(encoding="utf-8")
-
-    if args.remove_dry_run:
-        updated_html, removed_count = remove_dry_run_cards(index_html)
-        if removed_count == 0:
-            print("No dry-run project card found.")
-            return 0
-        INDEX_PATH.write_text(updated_html, encoding="utf-8")
-        print(f"Removed {removed_count} dry-run project card.")
-        return 0
-
-    normalize_args(args)
-
-    if not args.dry_run and project_exists(index_html, args.title):
-        print(f"Project card already exists for title: {args.title}", file=sys.stderr)
-        return 1
-
-    if args.print_only:
-        media_src = preview_media(args.image, args.title, args.no_copy) if args.image else None
-    elif args.dry_run:
-        media_src = preview_media(args.image, args.title, args.no_copy) if args.image else None
-        index_html, _ = remove_dry_run_cards(index_html)
-    else:
-        media_src = prepare_media(args.image, args.title, args.no_copy)
-
-    card_html = build_card(
-        title=args.title,
-        role=args.role,
-        tags=parse_csv(args.tags),
-        media_src=media_src,
-        links=parse_links(args),
-        wip=args.wip,
-        featured=args.featured,
-        test_card=args.dry_run,
-    )
-    if args.dry_run:
-        card_html = f"{DRY_RUN_START}\n{card_html}{DRY_RUN_END}\n"
-
-    if args.print_only:
-        print(card_html)
-        return 0
-
-    marker_index = find_insert_index(index_html)
-    if marker_index == -1:
-        print("Could not find work-grid insertion marker in index.html.", file=sys.stderr)
-        return 1
-
-    updated_html = index_html[:marker_index] + "\n" + card_html + index_html[marker_index:]
-    INDEX_PATH.write_text(updated_html, encoding="utf-8")
-    if args.dry_run:
-        print("Added dry-run project card to index.html.")
-        print("Remove it with: python tools/add_project_card.py --remove-dry-run")
-    else:
-        print(f"Added project card: {args.title}")
-        print(f"Media source: {media_src}")
-    return 0
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Add a project card to index.html.")
-    parser.add_argument("--title", help="Project title shown on the card.")
-    parser.add_argument("--image", help="Local image path, relative asset path, or image URL.")
-    parser.add_argument("--role", help="Short one-line contribution/role text.")
-    parser.add_argument("--tags", help="Comma-separated tags, for example: C#,Unity")
-    parser.add_argument("--link", help="Primary project URL.")
-    parser.add_argument("--link-title", default="Website", help="Accessible title for the primary link.")
-    parser.add_argument("--icon", help="Font Awesome class for the primary link icon.")
-    parser.add_argument(
-        "--extra-link",
-        action="append",
-        default=[],
-        help='Additional link in the form "url|title|icon", for example "https://...|Steam|fab fa-steam".',
-    )
-    parser.add_argument("--featured", action="store_true", help="Add the Featured Release badge.")
-    parser.add_argument("--wip", action="store_true", help="Show WIP status instead of link icons.")
-    parser.add_argument("--no-copy", action="store_true", help="Use --image as-is instead of copying/downloading it.")
-    parser.add_argument("--dry-run", action="store_true", help="Add/update an empty test card in index.html.")
-    parser.add_argument("--remove-dry-run", action="store_true", help="Remove the dry-run test card from index.html.")
-    parser.add_argument("--print-only", action="store_true", help="Print generated card HTML without editing files.")
-    return parser.parse_args()
-
-
-def normalize_args(args: argparse.Namespace) -> None:
-    if args.dry_run:
-        args.title = args.title or DRY_RUN_TITLE
-        args.role = args.role or DRY_RUN_ROLE
-        args.tags = args.tags or DRY_RUN_TAGS
-        return
-
-    missing_fields = [field for field in ("title", "image", "role", "tags") if not getattr(args, field)]
-    if missing_fields:
-        missing = ", ".join(f"--{field}" for field in missing_fields)
-        print(f"Missing required argument(s): {missing}", file=sys.stderr)
-        print("Use --dry-run to add an empty visual test card.", file=sys.stderr)
-        sys.exit(2)
+    return run_gui()
 
 
 def remove_dry_run_cards(index_html: str) -> tuple[str, int]:
-    pattern = re.compile(
-        rf"\n*[ \t]*{re.escape(DRY_RUN_START)}[ \t]*\n.*?{re.escape(DRY_RUN_END)}[ \t]*(?:\n+)?",
-        re.DOTALL,
-    )
-    updated_html, removed_count = pattern.subn("\n", index_html)
-    return updated_html, removed_count
+    pattern = rf"\n*[ \t]*{re.escape(DRY_RUN_START)}.*?{re.escape(DRY_RUN_END)}[ \t]*(?:\n+)?"
+    return re.subn(pattern, "\n", index_html, flags=re.DOTALL)
+
+
+def remove_project_by_title(index_html: str, title: str) -> tuple[str, int]:
+    for t in (html.escape(title), title):
+        pattern = rf"([ \t]*)<!--\s*{re.escape(t)}\s*\(span-\d\)\s*-->.*?\n\1</div>\s*\n?"
+        updated_html, count = re.subn(pattern, "", index_html, flags=re.DOTALL | re.IGNORECASE)
+        if count > 0:
+            return updated_html, count
+    return index_html, 0
+
+
+def get_existing_project_titles(index_html: str) -> list[str]:
+    pattern = re.compile(r'<h3 class="card-title">\s*([^<]+)\s*</h3>', re.IGNORECASE)
+    return [html.unescape(m.group(1).strip()) for m in pattern.finditer(index_html)]
 
 
 def find_insert_index(index_html: str) -> int:
-    marker_index = index_html.rfind(INSERT_MARKER)
-    if marker_index != -1:
-        return marker_index
-
-    matches = list(re.finditer(r"\n[ \t]*</section>[ \t]*\n[ \t]*</div>[ \t]*\n[ \t]*</main>", index_html))
-    return matches[-1].start() if matches else -1
+    match = re.search(r"</section>\s*</div>\s*</main>", index_html)
+    return match.start() if match else -1
 
 
 def project_exists(index_html: str, title: str) -> bool:
@@ -163,10 +106,7 @@ def project_exists(index_html: str, title: str) -> bool:
     return re.search(rf'<h3 class="card-title">\s*{title_pattern}\s*</h3>', index_html) is not None
 
 
-def prepare_media(image: str, title: str, no_copy: bool) -> str:
-    if no_copy:
-        return normalize_asset_path(image)
-
+def prepare_media(image: str, title: str) -> str:
     if is_url(image):
         DEFAULT_IMAGE_DIR.mkdir(exist_ok=True)
         target = DEFAULT_IMAGE_DIR / f"{slugify(title)}{extension_from_url(image)}"
@@ -178,8 +118,7 @@ def prepare_media(image: str, title: str, no_copy: bool) -> str:
         source = ROOT / source
 
     if not source.exists():
-        print(f"Image not found: {source}", file=sys.stderr)
-        sys.exit(1)
+        raise FileNotFoundError(f"Image not found: {source}")
 
     if source.is_relative_to(DEFAULT_IMAGE_DIR) or source.is_relative_to(ROOT / "gifs"):
         return to_site_path(source)
@@ -190,9 +129,7 @@ def prepare_media(image: str, title: str, no_copy: bool) -> str:
     return to_site_path(target)
 
 
-def preview_media(image: str, title: str, no_copy: bool) -> str:
-    if no_copy:
-        return normalize_asset_path(image)
+def preview_media(image: str, title: str) -> str:
     if is_url(image):
         return f"img/{slugify(title)}{extension_from_url(image)}"
 
@@ -205,18 +142,12 @@ def preview_media(image: str, title: str, no_copy: bool) -> str:
 
 
 def is_url(value: str) -> bool:
-    parsed = urllib.parse.urlparse(value)
-    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+    return value.startswith(("http://", "https://"))
 
 
 def extension_from_url(url: str) -> str:
-    path = urllib.parse.urlparse(url).path
-    suffix = Path(path).suffix.lower()
-    return suffix if suffix in {".gif", ".jpeg", ".jpg", ".png", ".webp"} else ".png"
-
-
-def normalize_asset_path(path: str) -> str:
-    return path.replace("\\", "/")
+    ext = url.split("?")[0].split("#")[0].split(".")[-1].lower()
+    return f".{ext}" if ext in {"gif", "jpeg", "jpg", "png", "webp"} else ".png"
 
 
 def to_site_path(path: Path) -> str:
@@ -224,28 +155,11 @@ def to_site_path(path: Path) -> str:
 
 
 def slugify(value: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
-    return slug or "project"
+    return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "project"
 
 
 def parse_csv(value: str) -> list[str]:
     return [item.strip() for item in value.split(",") if item.strip()]
-
-
-def parse_links(args: argparse.Namespace) -> list[dict[str, str]]:
-    links: list[dict[str, str]] = []
-    if args.link:
-        title = args.link_title
-        icon = args.icon or ICON_BY_TITLE.get(title.lower(), "fas fa-link")
-        links.append({"url": args.link, "title": title, "icon": icon})
-
-    for raw_link in args.extra_link:
-        parts = [part.strip() for part in raw_link.split("|")]
-        if len(parts) != 3 or not all(parts):
-            print(f'Invalid --extra-link value: "{raw_link}". Expected "url|title|icon".', file=sys.stderr)
-            sys.exit(1)
-        links.append({"url": parts[0], "title": parts[1], "icon": parts[2]})
-    return links
 
 
 def build_card(
@@ -312,6 +226,304 @@ def build_action_html(links: list[dict[str, str]], wip: bool) -> str:
     return f"""                        <div class="card-links">
 {chr(10).join(link_lines)}
                         </div>"""
+
+
+class ProjectCardBuilderGUI:
+    def __init__(self, root: tk.Tk):
+        self.root = root
+        self.root.title("Limbvoid Games - Project Card Builder")
+        self.root.geometry("560x500")
+        self.root.minsize(500, 420)
+        
+        self.setup_styles()
+        self.create_widgets()
+        self.log("Limbvoid Project Builder UI started.")
+
+    def setup_styles(self):
+        style = ttk.Style(self.root)
+        if "vista" in style.theme_names():
+            style.theme_use("vista")
+        elif "clam" in style.theme_names():
+            style.theme_use("clam")
+
+    def create_widgets(self):
+        main_frame = ttk.Frame(self.root, padding="15")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Form Frame
+        form_frame = ttk.LabelFrame(main_frame, text=" Project Card Details ", padding="10")
+        form_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+        form_frame.columnconfigure(1, weight=1)
+
+        self.entry_title = self.create_row(form_frame, "Project Title:", 0, "e.g., Space Combat Prototype, Akshat's Engine")
+        
+        # Image row
+        lbl_image = ttk.Label(form_frame, text="Image Path / URL:")
+        lbl_image.grid(row=1, column=0, sticky=tk.W, padx=5, pady=4)
+        
+        img_frame = ttk.Frame(form_frame)
+        img_frame.grid(row=1, column=1, sticky=tk.EW, padx=5, pady=4)
+        img_frame.columnconfigure(0, weight=1)
+        
+        self.entry_image = ttk.Entry(img_frame)
+        self.entry_image.grid(row=0, column=0, sticky=tk.EW)
+        
+        img_tip = "e.g., img/screenshot.png, gifs/gameplay.gif, or https://example.com/preview.png"
+        ToolTip(lbl_image, img_tip)
+        ToolTip(self.entry_image, img_tip)
+        
+        btn_browse = ttk.Button(img_frame, text="Browse...", command=self.browse_image)
+        btn_browse.grid(row=0, column=1, padx=(5, 0))
+        ToolTip(btn_browse, "Browse your local filesystem for a project image file")
+
+        self.entry_role = self.create_row(form_frame, "Role / Contribution:", 2, "e.g., Solo Developer, Physics Programmer, Level Designer")
+        self.entry_tags = self.create_row(form_frame, "Tags (comma separated):", 3, "e.g., C++, OpenGL, Unity, C#")
+        self.entry_link = self.create_row(form_frame, "Project Link URL:", 4, "e.g., https://limbvoid.itch.io/my-game, https://github.com/AkshatPuri")
+
+        # Checkboxes
+        check_frame = ttk.Frame(form_frame)
+        check_frame.grid(row=5, column=0, columnspan=2, sticky=tk.W, padx=5, pady=5)
+
+        self.var_featured = tk.BooleanVar(value=False)
+        self.var_wip = tk.BooleanVar(value=False)
+
+        chk_featured = ttk.Checkbutton(check_frame, text="Featured Release", variable=self.var_featured)
+        chk_featured.pack(side=tk.LEFT, padx=(0, 15))
+        ToolTip(chk_featured, "Check to show a 'Featured Release' badge on the card")
+
+        chk_wip = ttk.Checkbutton(check_frame, text="WIP Status", variable=self.var_wip)
+        chk_wip.pack(side=tk.LEFT)
+        ToolTip(chk_wip, "Check to display a WIP hammer status badge instead of direct link icons")
+
+        # Remove Card Area
+        remove_frame = ttk.LabelFrame(main_frame, text=" Remove Existing Card ", padding="10")
+        remove_frame.pack(fill=tk.X, pady=(0, 10))
+
+        lbl_remove = ttk.Label(remove_frame, text="Select Card:")
+        lbl_remove.pack(side=tk.LEFT, padx=(0, 10))
+
+        try:
+            initial_html = INDEX_PATH.read_text(encoding="utf-8")
+            titles = get_existing_project_titles(initial_html)
+        except Exception:
+            titles = []
+
+        self.combo_remove = ttk.Combobox(remove_frame, values=titles, state="readonly")
+        self.combo_remove.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
+        
+        remove_tip = "Select an existing card title to permanently delete it from index.html"
+        ToolTip(lbl_remove, remove_tip)
+        ToolTip(self.combo_remove, remove_tip)
+
+        btn_remove_selected = ttk.Button(remove_frame, text="Remove Card", command=self.handle_remove_selected)
+        btn_remove_selected.pack(side=tk.RIGHT)
+
+        # Action Buttons
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(fill=tk.X, pady=10)
+
+        btn_add = ttk.Button(btn_frame, text="Add Project Card", command=self.handle_add)
+        btn_add.pack(side=tk.LEFT, padx=(0, 10), fill=tk.X, expand=True)
+
+        btn_dry = ttk.Button(btn_frame, text="Add Dry-run Card", command=self.handle_dry)
+        btn_dry.pack(side=tk.LEFT, padx=(0, 10), fill=tk.X, expand=True)
+
+        btn_remove_dry = ttk.Button(btn_frame, text="Remove Dry-run Card", command=self.handle_remove_dry_run)
+        btn_remove_dry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        # Logs Area
+        log_frame = ttk.LabelFrame(main_frame, text=" Status Log ", padding="5")
+        log_frame.pack(fill=tk.X, side=tk.BOTTOM, pady=(10, 0))
+
+        self.txt_log = tk.Text(log_frame, height=3, wrap=tk.WORD, state=tk.DISABLED, bg="#f0f0f0", fg="#333333")
+        self.txt_log.pack(fill=tk.BOTH, expand=True)
+
+    def create_row(self, parent, label_text, row, tooltip_text=None):
+        lbl = ttk.Label(parent, text=label_text)
+        lbl.grid(row=row, column=0, sticky=tk.W, padx=5, pady=4)
+        entry = ttk.Entry(parent)
+        entry.grid(row=row, column=1, sticky=tk.EW, padx=5, pady=4)
+        if tooltip_text:
+            ToolTip(lbl, tooltip_text)
+            ToolTip(entry, tooltip_text)
+        return entry
+
+    def browse_image(self):
+        filename = filedialog.askopenfilename(
+            title="Select Project Image",
+            filetypes=[("Image Files", "*.png *.jpg *.jpeg *.gif *.webp"), ("All Files", "*.*")]
+        )
+        if filename:
+            self.entry_image.delete(0, tk.END)
+            self.entry_image.insert(0, filename)
+
+    def log(self, message, is_error=False):
+        self.txt_log.config(state=tk.NORMAL)
+        prefix = "[ERROR] " if is_error else "[INFO] "
+        self.txt_log.insert(tk.END, prefix + message + "\n")
+        self.txt_log.see(tk.END)
+        self.txt_log.config(state=tk.DISABLED)
+
+    def update_remove_dropdown(self, new_html):
+        new_titles = get_existing_project_titles(new_html)
+        self.combo_remove["values"] = new_titles
+        self.combo_remove.set("")
+
+    def infer_link_details(self, url: str) -> tuple[str, str]:
+        if not url:
+            return "", ""
+        url_lower = url.lower()
+        for domain, (title, icon) in {
+            "itch.io": ("Itch.io", "fab fa-itch-io"),
+            "steam": ("Steam", "fab fa-steam"),
+            "play.google.com": ("Google Play Store", "fab fa-google-play"),
+            "google.play": ("Google Play Store", "fab fa-google-play"),
+            "apps.apple.com": ("App Store", "fab fa-apple"),
+            "nintendo.com": ("Nintendo Switch", "fab fa-nintendo-switch"),
+            "xbox.com": ("Xbox", "fab fa-xbox"),
+            "github.com": ("GitHub", "fab fa-github"),
+        }.items():
+            if domain in url_lower:
+                return title, icon
+        return "Website", "fas fa-link"
+
+    def handle_add(self):
+        title = self.entry_title.get().strip()
+        image = self.entry_image.get().strip()
+        role = self.entry_role.get().strip()
+        tags = self.entry_tags.get().strip()
+        link_url = self.entry_link.get().strip()
+
+        try:
+            index_html = INDEX_PATH.read_text(encoding="utf-8")
+            missing = [f for f, val in [("Title", title), ("Image", image), ("Role", role), ("Tags", tags)] if not val]
+            if missing:
+                raise ValueError(f"Missing fields: {', '.join(missing)}")
+
+            if project_exists(index_html, title):
+                raise ValueError(f"Project card already exists for title: {title}")
+
+            media_src = prepare_media(image, title)
+
+            links = []
+            if link_url:
+                link_title, link_icon = self.infer_link_details(link_url)
+                links.append({"url": link_url, "title": link_title, "icon": link_icon})
+
+            card_html = build_card(
+                title=title,
+                role=role,
+                tags=parse_csv(tags),
+                media_src=media_src,
+                links=links,
+                wip=self.var_wip.get(),
+                featured=self.var_featured.get(),
+                test_card=False,
+            )
+
+            marker_index = find_insert_index(index_html)
+            if marker_index == -1:
+                raise ValueError("Could not find work-grid insertion marker in index.html.")
+
+            updated_html = index_html[:marker_index] + "\n" + card_html + index_html[marker_index:]
+            INDEX_PATH.write_text(updated_html, encoding="utf-8")
+
+            self.log(f"Successfully added project card: {title}")
+            self.update_remove_dropdown(updated_html)
+            messagebox.showinfo("Success", f"Project '{title}' added to portfolio successfully.")
+        except Exception as e:
+            self.log(str(e), is_error=True)
+            messagebox.showerror("Error", str(e))
+
+    def handle_dry(self):
+        title = self.entry_title.get().strip() or DRY_RUN_TITLE
+        image = self.entry_image.get().strip()
+        role = self.entry_role.get().strip() or DRY_RUN_ROLE
+        tags = self.entry_tags.get().strip() or DRY_RUN_TAGS
+        link_url = self.entry_link.get().strip()
+
+        try:
+            index_html = INDEX_PATH.read_text(encoding="utf-8")
+
+            media_src = preview_media(image, title) if image else None
+            index_html, _ = remove_dry_run_cards(index_html)
+
+            links = []
+            if link_url:
+                link_title, link_icon = self.infer_link_details(link_url)
+                links.append({"url": link_url, "title": link_title, "icon": link_icon})
+
+            card_html = build_card(
+                title=title,
+                role=role,
+                tags=parse_csv(tags),
+                media_src=media_src,
+                links=links,
+                wip=self.var_wip.get(),
+                featured=self.var_featured.get(),
+                test_card=True,
+            )
+            card_html = f"{DRY_RUN_START}\n{card_html}{DRY_RUN_END}\n"
+
+            marker_index = find_insert_index(index_html)
+            if marker_index == -1:
+                raise ValueError("Could not find work-grid insertion marker in index.html.")
+
+            updated_html = index_html[:marker_index] + "\n" + card_html + index_html[marker_index:]
+            INDEX_PATH.write_text(updated_html, encoding="utf-8")
+
+            self.log("Added visual dry-run card to index.html successfully.")
+            self.update_remove_dropdown(updated_html)
+            messagebox.showinfo("Success", "Dry-run project card added to portfolio.")
+        except Exception as e:
+            self.log(str(e), is_error=True)
+            messagebox.showerror("Error", str(e))
+
+    def handle_remove_selected(self):
+        selected = self.combo_remove.get().strip()
+        if not selected:
+            messagebox.showwarning("Remove Card", "Please select a project card to remove.")
+            return
+
+        confirm = messagebox.askyesno("Confirm Removal", f"Are you sure you want to permanently remove '{selected}'?")
+        if not confirm:
+            return
+
+        try:
+            index_html = INDEX_PATH.read_text(encoding="utf-8")
+            updated_html, removed_count = remove_project_by_title(index_html, selected)
+            if removed_count == 0:
+                raise ValueError(f"Could not find card matching title: {selected}")
+            INDEX_PATH.write_text(updated_html, encoding="utf-8")
+            self.log(f"Permanently removed project card: {selected}")
+            self.update_remove_dropdown(updated_html)
+            messagebox.showinfo("Success", f"Project card '{selected}' was successfully removed.")
+        except Exception as e:
+            self.log(str(e), is_error=True)
+            messagebox.showerror("Error", str(e))
+
+    def handle_remove_dry_run(self):
+        try:
+            index_html = INDEX_PATH.read_text(encoding="utf-8")
+            updated_html, removed_count = remove_dry_run_cards(index_html)
+            if removed_count == 0:
+                self.log("No dry-run project card found in index.html.")
+                messagebox.showinfo("Remove Dry Run", "No dry-run project card was found.")
+                return
+            INDEX_PATH.write_text(updated_html, encoding="utf-8")
+            self.log(f"Removed {removed_count} dry-run project card(s).")
+            self.update_remove_dropdown(updated_html)
+            messagebox.showinfo("Success", f"Removed {removed_count} dry-run project card(s) from portfolio.")
+        except Exception as e:
+            self.log(str(e), is_error=True)
+            messagebox.showerror("Error", str(e))
+
+
+def run_gui() -> int:
+    root = tk.Tk()
+    app = ProjectCardBuilderGUI(root)
+    root.mainloop()
+    return 0
 
 
 if __name__ == "__main__":
