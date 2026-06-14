@@ -15,9 +15,7 @@
     --border: #d8cfc1;
     /* Warm neutral divider */
     --grid-line: rgba(31, 42, 53, 0.16);
-    --page-grid: rgba(31, 42, 53, 0.085);
     --matrix-line: rgba(31, 42, 53, 0.24);
-    --matrix-glow: rgba(43, 98, 128, 0.1);
     --accent: #d45f43;
     /* Warm coral action color */
     --accent-hover: #a94732;
@@ -47,9 +45,7 @@
     --border: #303b45;
     /* Low-glare divider */
     --grid-line: rgba(211, 226, 235, 0.14);
-    --page-grid: rgba(211, 226, 235, 0.075);
     --matrix-line: rgba(211, 226, 235, 0.22);
-    --matrix-glow: rgba(255, 138, 97, 0.13);
     --accent: #ff8a61;
     /* Luminous coral in dark mode */
     --accent-hover: #ffad8f;
@@ -70,9 +66,7 @@
     --border: #2d3743;
     /* Quiet steel divider */
     --grid-line: rgba(242, 184, 75, 0.18);
-    --page-grid: rgba(91, 210, 203, 0.085);
     --matrix-line: rgba(91, 210, 203, 0.26);
-    --matrix-glow: rgba(242, 184, 75, 0.16);
     --accent: #f2b84b;
     /* Coin-op amber */
     --accent-hover: #ffd775;
@@ -94,9 +88,7 @@
     --border: #303c2f;
     /* Organic divider */
     --grid-line: rgba(140, 172, 112, 0.18);
-    --page-grid: rgba(140, 172, 112, 0.075);
     --matrix-line: rgba(215, 169, 85, 0.28);
-    --matrix-glow: rgba(111, 171, 117, 0.15);
     --accent: #d7a955;
     /* Brass highlight */
     --accent-hover: #f0ca78;
@@ -116,9 +108,7 @@
     --border: #242424;
 
     --grid-line: rgba(255,255,255,0.06);
-    --page-grid: rgba(255,255,255,0.03);
     --matrix-line: rgba(255,255,255,0.08);
-    --matrix-glow: rgba(255,255,255,0.04);
 
     --accent: #ffffff;
     --accent-hover: #d8d8d8;
@@ -140,12 +130,8 @@ html {
 }
 
 body {
-    background:
-        linear-gradient(var(--page-grid) 2px, transparent 2px),
-        linear-gradient(90deg, var(--page-grid) 2px, transparent 2px),
-        var(--bg);
+    background: var(--bg);
     background-size: 48px 48px;
-    animation: pageGridDrift 28s linear infinite;
     color: var(--text-secondary);
     font-family: var(--font-sans);
     font-size: 15px;
@@ -852,7 +838,6 @@ li {
 .project-card::before {
     border: 2px solid var(--matrix-line);
     opacity: 0.58;
-    animation: matrixBlink 2.6s steps(2, end) infinite, frameJitter 5.2s steps(1, end) infinite;
 }
 
 .project-card:hover::before {
@@ -870,9 +855,8 @@ li {
         linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) right top / 2px 22px no-repeat,
         linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) left bottom / 2px 22px no-repeat,
         linear-gradient(90deg, var(--matrix-line), var(--matrix-line)) right bottom / 2px 22px no-repeat;
-    box-shadow: 0 0 16px var(--matrix-glow);
     opacity: 0.32;
-    animation: matrixPulse 3.4s ease-in-out infinite;
+
 }
 
 .project-card:hover::after {
@@ -1075,51 +1059,6 @@ li {
     filter: grayscale(0%) contrast(1.05);
 }
 
-
-
-@keyframes matrixBlink {
-
-    0%,
-    44%,
-    100% {
-        opacity: 0.28;
-        filter: none;
-    }
-
-    45%,
-    52% {
-        opacity: 0.95;
-        filter: drop-shadow(0 0 8px var(--matrix-line));
-    }
-
-    64%,
-    70% {
-        opacity: 0.7;
-    }
-}
-
-@keyframes matrixPulse {
-
-    0%,
-    100% {
-        opacity: 0.18;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-
-@keyframes pageGridDrift {
-    from {
-        background-position: 0 0, 0 0, 0 0;
-    }
-
-    to {
-        background-position: 48px 48px, 48px 48px, 0 0;
-    }
-}
-
 @keyframes cardPopIn {
     0% {
         opacity: 0;
@@ -1139,20 +1078,6 @@ li {
     100% {
         opacity: 1;
         transform: scale(1);
-    }
-}
-
-@keyframes headingSignal {
-
-    0%,
-    100% {
-        transform: scaleX(0.35);
-        opacity: 0.45;
-    }
-
-    50% {
-        transform: scaleX(1);
-        opacity: 1;
     }
 }
 
@@ -1206,27 +1131,6 @@ li {
     }
 
     75% {
-        transform: translate(0, -1px);
-    }
-}
-
-@keyframes frameJitter {
-
-    0%,
-    88%,
-    100% {
-        transform: translate(0, 0);
-    }
-
-    90% {
-        transform: translate(2px, 0);
-    }
-
-    92% {
-        transform: translate(-1px, 1px);
-    }
-
-    94% {
         transform: translate(0, -1px);
     }
 }
