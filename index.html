@@ -42,6 +42,17 @@
                             <p class="subtitle-dev">Gameplay &amp; Tools Programmer</p>
                         </div>
                         <p class="bio-text">I love games, building the systems behind them, and making tools that help ideas move faster. I am currently developing my own indie game and always exploring new game technology, engine workflows, and playful ways to make development feel better.</p>
+                        <div class="bio-skills" aria-label="Skills">
+                            <span>C / C++</span>
+                            <span>C#</span>
+                            <span>Unity</span>
+                            <span>Godot</span>
+                            <span>Photoshop</span>
+                            <span>OpenGL</span>
+                            <span>SFML</span>
+                            <span>Git / GitHub</span>
+                            <span>Plastic SCM</span>
+                        </div>
                         <div class="bio-links">
                             <a href="https://www.youtube.com/watch?v=whk_Isv_YpY" target="_blank" rel="noopener" class="video-btn">
                                 <i class="fab fa-youtube"></i> Showreel Video
@@ -49,80 +60,30 @@
                         </div>
                     </div>
 
-                    <!-- Profile Photo Card (span-2) -->
-                    <div class="bento-card span-2 photo-card">
-                        <img src="img/photu.jpg" alt="Akshat Puri" class="profile-photo">
-                    </div>
-
-                    <!-- Skills Card (span-3) -->
-                    <div class="bento-card span-3 skills-card">
-                        <h3 class="card-heading">Skills</h3>
-                        <div class="skills-grid">
-                            <div class="skill-group">
-                                <h4>Languages</h4>
-                                <ul>
-                                    <li>C / C++</li>
-                                    <li>C#</li>
-                                </ul>
-                            </div>
-                            <div class="skill-group">
-                                <h4>Engines / Tools</h4>
-                                <ul>
-                                    <li>Unity</li>
-                                    <li>Godot</li>
-                                    <li>Photoshop</li>
-                                </ul>
-                            </div>
-                            <div class="skill-group">
-                                <h4>Graphics &amp; APIs</h4>
-                                <ul>
-                                    <li>OpenGL</li>
-                                    <li>SFML</li>
-                                </ul>
-                            </div>
-                            <div class="skill-group">
-                                <h4>Workflow</h4>
-                                <ul>
-                                    <li>Git / GitHub</li>
-                                    <li>Plastic SCM</li>
-                                </ul>
-                            </div>
+                    <!-- Profile Photo + Social Links -->
+                    <div class="profile-side">
+                        <div class="bento-card span-2 photo-card">
+                            <img src="img/photu.jpg" alt="Akshat Puri" class="profile-photo">
                         </div>
-                    </div>
-
-                    <!-- Socials Card (span-3) -->
-                    <div class="bento-card span-3 socials-card">
-                        <h3 class="card-heading">Connect</h3>
-                        <div class="socials-grid">
-                            <a href="https://github.com/AkshatPuri" target="_blank" rel="noopener">
-                                <i class="fab fa-github"></i> GitHub
-                            </a>
-                            <a href="https://www.linkedin.com/in/akshat-puri-430407201/" target="_blank" rel="noopener">
-                                <i class="fab fa-linkedin-in"></i> LinkedIn
-                            </a>
-                            <a href="https://discord.com/users/Limbvoid#7779" target="_blank" rel="noopener">
-                                <i class="fab fa-discord"></i> Discord
-                            </a>
-                            <a href="https://limbvoid.itch.io/" target="_blank" rel="noopener">
-                                <i class="fab fa-itch-io"></i> Itch.io
-                            </a>
-                            <a href="https://www.buymeacoffee.com/limbvoid" target="_blank" rel="noopener">
-                                <i class="fas fa-coffee"></i> Support
-                            </a>
-                            <a href="mailto:akshatpuri2016@gmail.com">
-                                <i class="far fa-envelope"></i> Email
-                            </a>
-                        </div>
+                        <nav class="social-rail" aria-label="Social links">
+                            <a href="https://github.com/AkshatPuri" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><i class="fab fa-github"></i></a>
+                            <a href="https://www.linkedin.com/in/akshat-puri-430407201/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://discord.com/users/Limbvoid#7779" target="_blank" rel="noopener" aria-label="Discord" title="Discord"><i class="fab fa-discord"></i></a>
+                            <a href="https://limbvoid.itch.io/" target="_blank" rel="noopener" aria-label="Itch.io" title="Itch.io"><i class="fab fa-itch-io"></i></a>
+                            <a href="https://www.buymeacoffee.com/limbvoid" target="_blank" rel="noopener" aria-label="Support" title="Support"><i class="fas fa-coffee"></i></a>
+                            <a href="mailto:akshatpuri2016@gmail.com" aria-label="Email" title="Email"><i class="far fa-envelope"></i></a>
+                        </nav>
                     </div>
                 </div>
 
-                <div class="work-section-label">
-                    <span>Selected Work</span>
-                    <p>Games, tools, prototypes, and shipped releases.</p>
-                </div>
+                <section class="work-grid" aria-labelledby="selected-work-heading">
+                    <div class="work-section-label">
+                        <span id="selected-work-heading">Selected Work</span>
+                        <p>Games, tools, prototypes, and shipped releases.</p>
+                    </div>
 
-                <!-- Bonfire 1 (span-4) -->
-                <div class="bento-card span-4 project-card">
+                    <!-- Bonfire 1 (span-4) -->
+                    <div class="bento-card span-4 project-card">
                     <div class="card-media">
                         <img src="gifs/bonfire1logogif.gif" alt="The Bonfire: Forsaken Lands" loading="lazy">
                     </div>
@@ -146,8 +107,8 @@
                     </div>
                 </div>
 
-                <!-- Bonfire 2 (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Bonfire 2 (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/bonfire2logogif.gif" alt="The Bonfire 2: Uncharted Shores" loading="lazy">
                     </div>
@@ -169,8 +130,8 @@
                     </div>
                 </div>
 
-                <!-- The Tree Creator (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- The Tree Creator (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="img/tree-creator.png" alt="The Tree Creator" loading="lazy">
                     </div>
@@ -190,8 +151,8 @@
                     </div>
                 </div>
 
-                <!-- Metal Haven (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Metal Haven (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/MetalHaven.gif" alt="Metal Haven" loading="lazy">
                     </div>
@@ -210,8 +171,8 @@
                     </div>
                 </div>
 
-                <!-- Scream Way Up (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Scream Way Up (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/screamgif.gif" alt="Scream Way Up" loading="lazy">
                     </div>
@@ -230,8 +191,8 @@
                     </div>
                 </div>
 
-                <!-- Smash Ant (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Smash Ant (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/antsgif.gif" alt="Smash Ant" loading="lazy">
                     </div>
@@ -250,8 +211,8 @@
                     </div>
                 </div>
 
-                <!-- Shooter Jumper (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Shooter Jumper (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/shooterjumpergif.gif" alt="Shooter Jumper" loading="lazy">
                     </div>
@@ -270,8 +231,8 @@
                     </div>
                 </div>
 
-                <!-- Long Pong (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Long Pong (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/ponggif.gif" alt="Long Pong" loading="lazy">
                     </div>
@@ -287,8 +248,8 @@
                     </div>
                 </div>
 
-                <!-- Fluttery Bird (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Fluttery Bird (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/flattybirdgif.gif" alt="Fluttery Bird" loading="lazy">
                     </div>
@@ -307,8 +268,8 @@
                     </div>
                 </div>
 
-                <!-- Trip (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Trip (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/tripgif.gif" alt="Trip" loading="lazy">
                     </div>
@@ -327,8 +288,8 @@
                     </div>
                 </div>
 
-                <!-- Dots (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Dots (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/dotsgif.gif" alt="Dots" loading="lazy">
                     </div>
@@ -347,8 +308,8 @@
                     </div>
                 </div>
 
-                <!-- Can You Do It (span-2) -->
-                <div class="bento-card span-2 project-card">
+                    <!-- Can You Do It (span-2) -->
+                    <div class="bento-card span-2 project-card">
                     <div class="card-media">
                         <img src="gifs/canyoudoit.png" alt="Can You Do It" loading="lazy">
                     </div>
@@ -365,7 +326,8 @@
                             <a href="https://limbvoid.itch.io/can-you-do-it" target="_blank" rel="noopener" title="Itch.io"><i class="fab fa-itch-io"></i></a>
                         </div>
                     </div>
-                </div>
+                    </div>
+                </section>
             </div>
         </main>
 

@@ -338,6 +338,7 @@ li {
     gap: var(--matrix-gap);
     padding: clamp(8px, 1.1vw, 12px);
     overflow: visible;
+    min-width: 0;
 }
 
 .intro-grid {
@@ -346,8 +347,30 @@ li {
     width: min(60vw, 1180px);
     max-width: 100%;
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
     gap: var(--intro-gap);
+    min-width: 0;
+}
+
+.intro-grid .bio-card {
+    grid-column: 1;
+}
+
+.intro-grid .profile-side {
+    grid-column: 2;
+}
+
+.work-grid {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 80vw;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: var(--matrix-gap);
+    overflow: visible;
+    min-width: 0;
 }
 
 /* Bento Card Base Styling */
@@ -368,6 +391,7 @@ li {
     opacity: 0;
     transform: scale(0);
     isolation: isolate;
+    min-width: 0;
 }
 
 .bento-card::before {
@@ -421,26 +445,14 @@ li {
 
 @media (min-width: 1025px) {
     .intro-grid .bio-card {
-        grid-column: 1 / span 4;
+        grid-column: 1;
     }
 
-    .intro-grid .photo-card {
-        grid-column: 5 / span 2;
+    .intro-grid .profile-side {
+        grid-column: 2;
     }
 
-    .intro-grid .skills-card {
-        grid-column: 1 / span 3;
-    }
-
-    .intro-grid .socials-card {
-        grid-column: 4 / span 3;
-    }
-
-    .work-section-label {
-        grid-column: 2 / span 6;
-    }
-
-    .project-card {
+    .work-grid .project-card {
         grid-column: span var(--project-span, 2);
         min-height: var(--project-height, 245px);
     }
@@ -480,6 +492,7 @@ li {
     color: var(--text-secondary);
     max-width: 580px;
     min-height: 4.8em;
+    overflow-wrap: break-word;
 }
 
 .bio-card .bio-text.is-typing::after {
@@ -491,6 +504,30 @@ li {
     background: var(--accent);
     vertical-align: -0.12em;
     animation: caretBlink 780ms steps(1, end) infinite;
+}
+
+.bio-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 0;
+    max-width: 620px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    min-width: 0;
+}
+
+.bio-skills span {
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.bio-skills span:not(:last-child)::after {
+    content: ".";
+    margin: 0 9px;
+    color: var(--accent);
+    font-weight: 900;
 }
 
 .bio-card .video-btn {
@@ -531,8 +568,16 @@ li {
 }
 
 /* ==========================================
-   PHOTO CARD STYLING
+   PHOTO & SOCIAL RAIL STYLING
    ========================================== */
+.profile-side {
+    display: flex;
+    align-items: stretch;
+    align-self: stretch;
+    gap: 12px;
+    min-width: 0;
+}
+
 .photo-card {
     padding: 0;
     background: var(--text);
@@ -542,9 +587,11 @@ li {
     justify-self: center;
 }
 
-.intro-grid .photo-card {
-    width: 100%;
-    justify-self: stretch;
+.profile-side .photo-card {
+    flex: 0 0 var(--photo-size, auto);
+    height: var(--photo-size, 100%);
+    min-width: 0;
+    width: var(--photo-size, auto);
 }
 
 .photo-card::before,
@@ -603,102 +650,37 @@ li {
     animation: photoFrameLock 720ms steps(2, end);
 }
 
-/* ==========================================
-   SKILLS CARD STYLING
-   ========================================== */
-.skills-card {
-    gap: 12px;
-}
-
-.card-heading {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    margin-bottom: 4px;
-    position: relative;
-}
-
-.card-heading::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -1px;
-    width: 34px;
-    height: 2px;
-    background: var(--accent);
-    transform-origin: left;
-    animation: headingSignal 2.8s ease-in-out infinite;
-}
-
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
-.skill-group h4 {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 6px;
-}
-
-.skill-group ul li {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 2px;
-}
-
-/* ==========================================
-   SOCIALS CARD STYLING
-   ========================================== */
-.socials-card {
-    gap: 12px;
-}
-
-.socials-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px 16px;
-}
-
-.socials-grid a {
+.social-rail {
     display: flex;
+    flex: 0 0 60px;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    min-width: 0;
-    font-size: 14px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    transition: color 0.22s ease, transform 0.22s ease;
+    justify-content: center;
+    gap: 8px;
+    align-self: stretch;
 }
 
-.socials-grid a i {
-    font-size: 16px;
+.social-rail a {
+    width: 60px;
+    height: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
     color: var(--text-muted);
-    width: 18px;
-    text-align: center;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.socials-grid a:hover {
+.social-rail a:hover {
     color: var(--accent);
-    transform: translateX(4px);
-}
-
-.socials-grid a:hover i {
-    color: var(--accent);
+    transform: translateX(5px);
 }
 
 /* ==========================================
    WORK SECTION LABEL
    ========================================== */
 .work-section-label {
+    grid-column: 1 / -1;
     display: flex;
     align-items: end;
     justify-content: space-between;
@@ -1133,24 +1115,29 @@ li {
     
     .intro-grid {
         width: 100%;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: minmax(0, 1fr) auto;
     }
 
     .intro-grid .bio-card {
-        grid-column: span 3;
+        grid-column: 1;
     }
 
-    .intro-grid .photo-card {
-        grid-column: span 1;
-    }
-
-    .intro-grid .skills-card,
-    .intro-grid .socials-card {
-        grid-column: span 2;
+    .intro-grid .profile-side {
+        grid-column: 2;
     }
 
     .unified-grid {
         grid-template-columns: repeat(4, 1fr);
+    }
+
+    .work-grid {
+        width: min(100%, 900px);
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .work-grid .project-card {
+        grid-column: span 3;
+        min-height: var(--project-height, 220px);
     }
     
     .span-4 {
@@ -1166,7 +1153,29 @@ li {
     }
 
     .work-section-label {
-        grid-column: span 4;
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 980px) {
+    .intro-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .intro-grid .bio-card,
+    .intro-grid .profile-side {
+        grid-column: 1;
+    }
+
+    .intro-grid .profile-side {
+        width: min(100%, 394px);
+        justify-self: center;
+    }
+
+    .profile-side .photo-card {
+        flex: 1 1 auto;
+        width: auto;
+        height: auto;
     }
 }
 
@@ -1195,6 +1204,12 @@ li {
         gap: 16px;
         padding: 8px;
     }
+
+    .work-grid {
+        width: calc(100% - (var(--frame-offset) * 2));
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
     
     .span-4, .span-3, .span-2 {
         grid-column: span 1;
@@ -1208,6 +1223,20 @@ li {
 
     .work-section-label p {
         text-align: left;
+    }
+
+    .bio-card .bio-text {
+        max-width: 100%;
+        min-height: 0;
+    }
+
+    .bio-skills {
+        max-width: 100%;
+        font-size: 13px;
+    }
+
+    .bio-skills span:not(:last-child)::after {
+        margin: 0 6px;
     }
     
     .bento-card {
@@ -1224,7 +1253,7 @@ li {
         grid-template-columns: 1fr;
     }
 
-    .intro-grid .photo-card {
+    .intro-grid .profile-side {
         width: min(100%, 300px);
         justify-self: center;
     }
@@ -1234,11 +1263,19 @@ li {
         animation: none;
     }
     
-    .skills-grid, .socials-grid {
-        grid-template-columns: 1fr;
+    .social-rail {
+        flex-basis: 38px;
+        gap: 6px;
+    }
+
+    .social-rail a {
+        width: 38px;
+        height: 38px;
+        font-size: 19px;
     }
 
     .project-card {
+        grid-column: 1;
         min-height: 0;
     }
 

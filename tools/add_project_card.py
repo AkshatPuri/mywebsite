@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = ROOT / "index.html"
 DEFAULT_IMAGE_DIR = ROOT / "img"
-INSERT_MARKER = "\n\n            </div>\n        </main>"
+INSERT_MARKER = "\n                </section>\n            </div>\n        </main>"
 DRY_RUN_START = "                <!-- DRY-RUN-CARD:START -->"
 DRY_RUN_END = "                <!-- DRY-RUN-CARD:END -->"
 DRY_RUN_TITLE = "Dry Run Project"
@@ -87,7 +87,7 @@ def main() -> int:
 
     marker_index = find_insert_index(index_html)
     if marker_index == -1:
-        print("Could not find project-grid insertion marker in index.html.", file=sys.stderr)
+        print("Could not find work-grid insertion marker in index.html.", file=sys.stderr)
         return 1
 
     updated_html = index_html[:marker_index] + "\n" + card_html + index_html[marker_index:]
@@ -154,7 +154,7 @@ def find_insert_index(index_html: str) -> int:
     if marker_index != -1:
         return marker_index
 
-    matches = list(re.finditer(r"\n[ \t]*</div>[ \t]*\n[ \t]*</main>", index_html))
+    matches = list(re.finditer(r"\n[ \t]*</section>[ \t]*\n[ \t]*</div>[ \t]*\n[ \t]*</main>", index_html))
     return matches[-1].start() if matches else -1
 
 

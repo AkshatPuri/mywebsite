@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCircleCursor();
     setupCardPopIn();
     setupBioTyping();
+    setupIntroPhotoLock();
 
     function pickRandom(items) {
         return items[Math.floor(Math.random() * items.length)];
@@ -244,6 +245,46 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         window.setTimeout(typeNextCharacter, 520);
+    }
+
+    function setupIntroPhotoLock() {
+        const bioCard = document.querySelector('.intro-grid .bio-card');
+        const profileSide = document.querySelector('.intro-grid .profile-side');
+        const sideBySideQuery = window.matchMedia('(min-width: 981px)');
+        if (!bioCard || !profileSide) {
+            return;
+        }
+
+        let frameId = null;
+        const syncPhotoSize = () => {
+            if (frameId) {
+                window.cancelAnimationFrame(frameId);
+            }
+
+            frameId = window.requestAnimationFrame(() => {
+                frameId = null;
+
+                if (!sideBySideQuery.matches) {
+                    profileSide.style.removeProperty('--photo-size');
+                    return;
+                }
+
+                const bioHeight = Math.ceil(bioCard.getBoundingClientRect().height);
+                if (bioHeight > 0) {
+                    profileSide.style.setProperty('--photo-size', `${bioHeight}px`);
+                }
+            });
+        };
+
+        syncPhotoSize();
+        window.addEventListener('resize', syncPhotoSize);
+        sideBySideQuery.addEventListener('change', syncPhotoSize);
+
+        if ('ResizeObserver' in window) {
+            new ResizeObserver(syncPhotoSize).observe(bioCard);
+        }
+
+        document.fonts?.ready.then(syncPhotoSize);
     }
 
     function setTheme(theme) {
