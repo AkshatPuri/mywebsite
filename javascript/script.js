@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupProjectGrid(projectCards);
     setupProjectCardLinks();
+    setupProjectFilters();
     setupCircleCursor();
     setupCardPopIn();
     setupBioTyping();
@@ -120,13 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const queuedSpans = [];
 
         cards.forEach((card, index) => {
-            const layout = pinnedFeaturedLayouts[index] || createFlexibleProjectLayout(cards.length - index, rowFill, queuedSpans);
+            const usePinned = isFeaturedCard(card) && index < pinnedFeaturedLayouts.length;
+            const layout = usePinned ? pinnedFeaturedLayouts[index] : createFlexibleProjectLayout(cards.length - index, rowFill, queuedSpans);
 
             applyProjectLayout(card, layout);
             rowFill = (rowFill + layout.span) % 8;
 
             if (isFeaturedCard(card)) {
                 card.classList.add('featured-project-card');
+            } else {
+                card.classList.remove('featured-project-card');
             }
         });
     }
@@ -232,6 +236,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 window.open(firstLink.href, '_blank', 'noopener,noreferrer');
+            });
+        });
+    }
+
+    function setupProjectFilters() {
+        const filterContainer = document.querySelector('.work-filters');
+        if (!filterContainer) {
+            return;
+        }
+
+        const filterButtons = filterContainer.querySelectorAll('.filter-btn');
+        const projectGrid = document.querySelector('.work-grid');
+        if (!projectGrid) {
+            return;
+        }
+
+        filterButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+                const cards = [...projectGrid.querySelectorAll('.project-card')];
+                const visibleCards = [];
+
+                cards.forEach((card) => {
+                    const tags = [...card.querySelectorAll('.tag')].map((t) => t.textContent.trim().toLowerCase());
+                    const isTool = tags.includes('tool');
+                    const isGame = !isTool;
+
+                    let matches = false;
+                    if (filterValue === 'all') {
+                        matches = true;
+                    } else if (filterValue === 'c++') {
+                        matches = tags.includes('c++');
+                    } else if (filterValue === 'c#') {
+                        matches = tags.includes('c#');
+                    } else if (filterValue === 'tool') {
+                        matches = isTool;
+                    } else if (filterValue === 'game') {
+                        matches = isGame;
+                    }
+
+                    if (matches) {
+                        card.classList.remove('is-hidden');
+                        visibleCards.push(card);
+                    } else {
+                        card.classList.add('is-hidden');
+                    }
+                });
+
+                applyOrderedProjectLayouts(visibleCards);
             });
         });
     }

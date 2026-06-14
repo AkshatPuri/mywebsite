@@ -719,6 +719,48 @@ li {
 }
 
 /* ==========================================
+   WORK FILTERS & BUTTONS
+   ========================================== */
+.work-filters {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.filter-btn {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: var(--transition);
+}
+
+.filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+.bento-card.is-hidden {
+    display: none !important;
+}
+
+/* ==========================================
    PROJECT CARD STYLING
    ========================================== */
 .project-card {
