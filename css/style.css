@@ -500,10 +500,17 @@ li {
     font-weight: 900;
 }
 
+.bio-links {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .bio-card .video-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-right: 12px;
+    margin-bottom: 12px;
     background: var(--accent);
     color: var(--bg);
     padding: 8px 16px;
@@ -1233,6 +1240,16 @@ li {
 
     .project-card .card-title {
         white-space: normal;
+    }
+
+    .bio-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .bio-card .video-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 
